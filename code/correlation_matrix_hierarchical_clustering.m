@@ -1,6 +1,6 @@
 %% load data
 
-T = readtable('data.csv'); % data should have variables as columns with the first row being names of variables
+T = readtable('DatasetQ4.csv');
 
 variable_names = T.Properties.VariableNames;
 data = table2array(T);
@@ -31,7 +31,7 @@ correlationMatrixPlot_width = 0.5 / (num_variables + 1);
 
 overall_fig_size_x = 7;
 
-overall_fig_size_y = 7;
+overall_fig_size_y = 7.5;
 
 
 figure('position',[10 10 1000 500]);
@@ -39,14 +39,17 @@ figure('position',[10 10 1000 500]);
 
 % dendrogram
 
-subplot('position',[0 dendrogram_height 1 1-dendrogram_height]);
+% subplot('position',[0 dendrogram_height 1 1-dendrogram_height]);
+subplot('position',[0 dendrogram_height 0.91 1-dendrogram_height]);
 
 colour_threshold = 'default';
 [handles_to_lines, ~, variable_order] = dendrogram(hierarchical_cluster_tree, 0, 'colorthreshold', colour_threshold);
-
-xticklabels = variable_names(variable_order);
-set(gca, 'ytick', [], 'xticklabel', xticklabels, 'TickLength', [0,0]);
 set(handles_to_lines, 'LineWidth', 3);
+ax = gca;
+ax.YTick = [];
+ax.YColor = 'none';
+ax.XRuler.Axle.Visible = 'off';
+ax.XTickLabel = variable_names(variable_order);
 
 
 % correlation matrix
@@ -58,14 +61,23 @@ correlationMatrix_clusteredForPlotting = correlationMatrix_clusteredForPlotting(
 correlationMatrix_clusteredForPlotting(eye(length(correlationMatrix_clusteredForPlotting))>0) = Inf; % set diagonal to infinity for nicer plot
 
 colormap('jet');
-grotcolourmapHandle = colormap;
-grotcolourmapHandle(end,:) = [.8 .8 .8];
-colormap(grotcolourmapHandle);
+colourmapHandle = colormap;
+colourmapHandle(end,:) = [.8 .8 .8];
+colormap(colourmapHandle);
 
-imagesc(correlationMatrix_clusteredForPlotting,[(correlationMatrix_maxValue + 0.1)*(-1), (correlationMatrix_maxValue + 0.1)]);
+heatmap_colorRange = [(correlationMatrix_maxValue + 0.1)*(-1), (correlationMatrix_maxValue + 0.1)];
+% heatmap_colorRange = [-1, 1];
+
+imagesc(correlationMatrix_clusteredForPlotting, heatmap_colorRange);
+
+c = colorbar('eastoutside');
+c = colorbar;
+c.Label.String = 'Pearson correlation';
 
 axis off;
 daspect('auto');
+
+
 
 set(gcf,...
     'Units', 'Inches', ...
