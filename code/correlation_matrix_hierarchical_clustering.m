@@ -76,12 +76,16 @@ c.Label.String = 'Pearson correlation';
 
 axis off;
 daspect('auto');
-
-
-
 set(gcf,...
     'Units', 'Inches', ...
     'Position', [0, 0, overall_fig_size_x, overall_fig_size_y], ...
     'PaperPositionMode', 'auto');
+
+leftShift_to_centre_corValues = 0.15;
+for cormat_row_position = 1: num_variables
+    for cormat_column_position = 1 : num_variables
+        text( (cormat_column_position - leftShift_to_centre_corValues), cormat_row_position, num2str(correlationMatrix_clusteredForPlotting(cormat_row_position, cormat_column_position), '%.2f'), 'Color', [0.8 0.8 0.8]);
+    end
+end
 
 saveas(gcf, 'correlation_clustering.jpeg');
