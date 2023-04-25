@@ -23,7 +23,7 @@ group2_index_boot_complete = cat(2, group2_index_orig, group2_index_boot);
 
 boot_ES = zeros(num_bootsamples+1, 1);
 
-warning('off', 'stats:LinearModel:RankDefDesignMat')
+warning('off', 'stats:regress:RankDefDesignMat')
 for boot_counter = 1 : length(boot_ES)
 
     tmp_group1_idx = group1_index_boot_complete(:,boot_counter);
@@ -36,14 +36,15 @@ for boot_counter = 1 : length(boot_ES)
 
     tmp_X = cat(1, tmp_group1_X, tmp_group2_X);
     tmp_y = cat(1, tmp_group1_y, tmp_group2_y);
+    
+    tmp_col_ones = ones(length(tmp_y), 1);
+    tmp_X = cat(2, tmp_col_ones, tmp_X);
 
-    tmp_mdl = fitlm(tmp_X,tmp_y);
-
-    tmp_ES = (tmp_mdl.Coefficients.Estimate(2));
-    boot_ES(boot_counter) = tmp_ES;
+    tmp_boot_ES_all = regress(tmp_y, tmp_X);
+    boot_ES(boot_counter) = tmp_boot_ES_all(2);
 
 end
-warning('on', 'stats:LinearModel:RankDefDesignMat')
+warning('on', 'stats:regress:RankDefDesignMat')
 
 bootstrap_CI90 = prctile(boot_ES, [5 95])
 bootstrap_CI95 = prctile(boot_ES, [2.5 97.5])
