@@ -4,17 +4,20 @@ T = readtable('DatasetQ4.csv');
 
 variable_names = T.Properties.VariableNames;
 data = table2array(T);
+num_observations = size(data,1);
 num_variables = size(data,2);
 
 %% perform cluster analysis on correlation matrix
 
-correlationMatrix = corr(data);
+data_zscore = zscore(data);
+
+correlationMatrix = corr(data_zscore);
 
 correlationMatrix_maxValue = max(max(abs(tril(correlationMatrix, -1))));
 
-correlationMatrix_distancesMatrix = sqrt(2) * sqrt(1 - correlationMatrix);
+correlationMatrix_euclideanDistancesMatrix = sqrt(2 * num_observations * (1 - correlationMatrix));
 
-hierarchical_cluster_tree = linkage(correlationMatrix_distancesMatrix, 'ward');
+hierarchical_cluster_tree = linkage(correlationMatrix_euclideanDistancesMatrix, 'ward');
 
 
 %% plot results
