@@ -12,11 +12,9 @@ correlationMatrix = corr(data);
 
 correlationMatrix_maxValue = max(max(abs(tril(correlationMatrix, -1))));
 
-correlationMatrix_distancesMatrix = 1 - correlationMatrix;
+correlationMatrix_distancesMatrix = sqrt(2) * sqrt(1 - correlationMatrix);
 
-correlationMatrix_distancesVector = squareform(correlationMatrix_distancesMatrix);
-
-hierarchical_cluster_tree = linkage(correlationMatrix_distancesVector, 'ward');
+hierarchical_cluster_tree = linkage(correlationMatrix_distancesMatrix, 'ward');
 
 
 %% plot results
