@@ -15,9 +15,17 @@ correlationMatrix = corr(data_zscore);
 
 correlationMatrix_maxValue = max(max(abs(tril(correlationMatrix, -1))));
 
-correlationMatrix_euclideanDistancesMatrix = sqrt(2 * num_observations * (1 - correlationMatrix));
+correlationMatrix_correlationDistancesMatrix = 1 - correlationMatrix;
 
-hierarchical_cluster_tree = linkage(correlationMatrix_euclideanDistancesMatrix, 'ward');
+% ccorrelationMatrix_correlationDistancesVector = squareform(correlationMatrix_correlationDistancesMatrix);
+
+correlationMatrix_euclideanDistancesMatrix = sqrt(2 * num_observations * correlationMatrix_correlationDistancesMatrix);
+
+% ccorrelationMatrix_euclideanDistancesVector = squareform(correlationMatrix_euclideanDistancesMatrix);
+
+distance_metrics = correlationMatrix_euclideanDistancesMatrix;
+
+hierarchical_cluster_tree = linkage(distance_metrics, 'ward');
 
 
 %% plot results
