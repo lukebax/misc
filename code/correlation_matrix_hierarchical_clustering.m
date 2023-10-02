@@ -7,25 +7,25 @@ data = table2array(T);
 num_observations = size(data,1);
 num_variables = size(data,2);
 
+dof = num_observations - 1;
+
 %% perform cluster analysis on correlation matrix
 
 data_zscore = zscore(data);
 
-correlationMatrix = corr(data_zscore);
+correlationMatrix = corr(data_zscore, 'Type', 'Pearson');
 
 correlationMatrix_maxValue = max(max(abs(tril(correlationMatrix, -1))));
 
 correlationMatrix_correlationDistancesMatrix = 1 - correlationMatrix;
 
-% ccorrelationMatrix_correlationDistancesVector = squareform(correlationMatrix_correlationDistancesMatrix);
+correlationMatrix_euclideanDistancesMatrix = sqrt(2 * dof * correlationMatrix_correlationDistancesMatrix);
 
-correlationMatrix_euclideanDistancesMatrix = sqrt(2 * num_observations * correlationMatrix_correlationDistancesMatrix);
+ccorrelationMatrix_euclideanDistancesVector = squareform(correlationMatrix_euclideanDistancesMatrix);
 
-% ccorrelationMatrix_euclideanDistancesVector = squareform(correlationMatrix_euclideanDistancesMatrix);
+% ccorrelationMatrix_euclideanDistancesVector = pdist(data_zscore', 'euclidean');
 
-distance_metrics = correlationMatrix_euclideanDistancesMatrix;
-
-hierarchical_cluster_tree = linkage(distance_metrics, 'ward');
+hierarchical_cluster_tree = linkage(ccorrelationMatrix_euclideanDistancesVector, 'ward');
 
 
 %% plot results
@@ -70,18 +70,19 @@ correlationMatrix_clusteredForPlotting = correlationMatrix_clusteredForPlotting(
 correlationMatrix_clusteredForPlotting(eye(length(correlationMatrix_clusteredForPlotting))>0) = Inf; % set diagonal to infinity for nicer plot
 
 colormap('jet');
+% colormap('hot');
 colourmapHandle = colormap;
 colourmapHandle(end,:) = [.8 .8 .8];
 colormap(colourmapHandle);
 
 heatmap_colorRange = [(correlationMatrix_maxValue + 0.1)*(-1), (correlationMatrix_maxValue + 0.1)];
-% heatmap_colorRange = [-1, 1];
+% heatmap_colorRange = [0, 1.05];
 
 imagesc(correlationMatrix_clusteredForPlotting, heatmap_colorRange);
 
 c = colorbar('eastoutside');
 c = colorbar;
-c.Label.String = 'Pearson correlation';
+c.Label.String = 'Correlation coefficients';
 
 axis off;
 daspect('auto');
