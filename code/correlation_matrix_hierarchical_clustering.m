@@ -7,8 +7,6 @@ data = table2array(T);
 num_observations = size(data,1);
 num_variables = size(data,2);
 
-dof = num_observations - 1;
-
 %% perform cluster analysis on correlation matrix
 
 data_zscore = zscore(data);
@@ -19,7 +17,7 @@ correlationMatrix_maxValue = max(max(abs(tril(correlationMatrix, -1))));
 
 correlationMatrix_correlationDistancesMatrix = 1 - correlationMatrix;
 
-correlationMatrix_euclideanDistancesMatrix = sqrt(2 * dof * correlationMatrix_correlationDistancesMatrix);
+correlationMatrix_euclideanDistancesMatrix = sqrt(2 * (num_observations - 1) * correlationMatrix_correlationDistancesMatrix);
 
 ccorrelationMatrix_euclideanDistancesVector = squareform(correlationMatrix_euclideanDistancesMatrix);
 
