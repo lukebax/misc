@@ -14,8 +14,8 @@ sigma_2 = 0.66;
 % match the Petal trial (n=102 for alpha=0.5, power=0.9, two-tailed,
 % allocation ration = 1
 % set sample sizes to be small (e.g. 100) to get variable results
-n_1 = 10000;
-n_2 = 10000;
+n_1 = 1000;
+n_2 = 1000;
 
 % draw dataset 1 and get mean and standard deviation
 d_1 = normrnd(mu_1, sigma_1, n_1, 1);
@@ -33,7 +33,7 @@ std_2 = std(d_2);
 numerator = abs(mean_1 - mean_2);
 denominator = sqrt((((n_1 - 1) * std_1^2) + ((n_2 - 1) * std_2^2)) / (n_1 + n_2 - 2));
 
-result_Cohens_D = numerator / denominator;
+Cohens_D = numerator / denominator;
 
 %% calculate Cohen's f2
 
@@ -50,8 +50,10 @@ r = sign(t) * sqrt(t^2 / (length(y) - rank(X) + t^2));
 r2 = r^2;
 
 % formula for Cohen's f2 is from here: https://doi.org/10.3758/BRM.41.4.1149
-result_Cohens_f2 = r2 / (1 - r2);
+Cohens_f2 = r2 / (1 - r2);
 
+%% Convert between Cohen's D and Cohen's f2
 
+Cohens_f2_from_Cohens_D = Cohens_D^2 / 4;
 
-
+Cohens_D_from_Cohens_f2 = 2 * sqrt(Cohens_f2);
